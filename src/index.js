@@ -25,12 +25,30 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Middleware
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "http://localhost:5173";
+
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      const allowedOrigins = [allowedOrigin, "http://localhost:5173", "http://localhost:5100"];
+      if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith(".vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
+// Basic logger for debugging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url} - Origin: ${req.get('Origin')}`);
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
