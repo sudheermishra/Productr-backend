@@ -24,11 +24,9 @@ MONGODB_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_secret_key
 ALLOWED_ORIGIN=http://localhost:5173
 
-# Email Service (Gmail example)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
+# Brevo (formerly Sendinblue) API Configuration
+BREVO_API_KEY=your_brevo_api_key_here
+SENDER_EMAIL=your_verified_sender_email@gmail.com
 ```
 
 ### 4. Run the server
@@ -47,7 +45,7 @@ npm start
 ## 🛠 Tech Stack
 - **Node.js & Express**: Web framework.
 - **MongoDB & Mongoose**: Database and modeling.
-- **Nodemailer**: For sending OTP verification emails.
+- **@getbrevo/brevo**: Transactional Email SDK for sending OTP verification emails via HTTP (reliable on Render).
 - **Multer**: For handling local image uploads.
 - **CORS**: Configured for secure frontend communication.
 
@@ -76,6 +74,7 @@ This backend is pre-configured for **Render**:
 - Uses `process.env.PORT`.
 - Includes `engines` in `package.json`.
 - Automatically creates an `uploads/` folder on startup.
+- **Important**: Uses the Brevo API instead of SMTP, which is necessary for Render because they block standard SMTP ports (587, 465) in their production environment.
 
 > [!NOTE]  
 > Images are stored locally in the `/uploads` folder. On Render's free tier, these files will be wiped when the server restarts.
